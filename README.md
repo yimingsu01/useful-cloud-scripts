@@ -1,1 +1,2 @@
-# useful-cloud-scripts
+# Useful Cloud Scripts
+Scripts for installing basic utils
