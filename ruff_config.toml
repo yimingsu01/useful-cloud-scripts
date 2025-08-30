@@ -1,6 +1,6 @@
 # Put this in pyproject.toml
-[tool.ruff.lint]
+[lint]
 ignore = ["E401", "F405", "E712"]
 
-[tool.ruff.lint.flake8-quotes]
+[lint.flake8-quotes]
 docstring-quotes = "double"
