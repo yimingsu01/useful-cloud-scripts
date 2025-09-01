@@ -1,0 +1,9 @@
+[font]
+normal = { family = "Agave Nerd Font Mono", style = "Regular" }
+size = 14
+
+[general]
+import = ["~/.config/alacritty/themes/themes/ayu_light.toml"]
+
+[window]
+option_as_alt = "Both"
