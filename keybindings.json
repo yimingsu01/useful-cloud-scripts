@@ -1,0 +1,38 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "ctrl+f",
+        "command": "ctrl+f",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+a",
+        "command": "ctrl+a",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "ctrl+e",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+p",
+        "command": "ctrl+p",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+d",
+        "command": "ctrl+d",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+f",
+        "command": "ctrl+f",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+b",
+        "command": "ctrl+b",
+        "when": "terminalFocus"
+    },
+]
