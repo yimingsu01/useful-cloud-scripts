@@ -2,7 +2,10 @@ return {
   {
     "folke/snacks.nvim",
     opts = {
-      explorer = { enabled = false },
+      explorer = { enabled = true },
+      options = {
+        use_as_default_explorer = true,
+      },
     },
   },
   {
@@ -14,7 +17,7 @@ return {
     lazy = false,
     opts = {
       options = {
-        use_as_default_explorer = true,
+        use_as_default_explorer = false,
       },
     },
   },
