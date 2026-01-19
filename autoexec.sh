@@ -1,8 +1,9 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 import subprocess
 import concurrent.futures
 import shutil
 import os
+from pathlib import Path
 
 scripts_to_run = [
     "brew.sh",
@@ -11,8 +12,8 @@ scripts_to_run = [
 ]
 
 print("installing oh my zsh")
-subprocess.run(["touch", "~/.zshrc"], cwd=".", check=True, executable="/bin/bash")
-omz_line = 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"'
+subprocess.run(["touch", os.path.expanduser("~/.zshrc")], check=True, executable="/bin/bash")
+omz_line = 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended'
 subprocess.run(omz_line, shell=True, cwd=".", check=True)
 
 def run_script(script):
@@ -45,3 +46,6 @@ os.rename("~/.config/nvim.bak", "~/.config/nvim")
 
 print("copying tmux config")
 shutil.copyfile("./tmux.conf", "~/.tmux.conf")
+
+print("changing default shell to zsh")
+subprocess.run(['chsh', '-s', "/usr/bin/zsh", "yimingsu"], check=True)
