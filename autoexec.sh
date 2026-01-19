@@ -39,5 +39,9 @@ subprocess.run(["brew", "cleanup"], cwd=".", check=True, executable="/usr/bin/zs
 print("Installing neovim via apt")
 subprocess.run(["sudo", "apt", "install", "neovim"], cwd=".", check=True, executable="/usr/bin/zsh")
 
+print("copying neovim config")
 shutil.copytree("./nvim.bak", "~/.config", dirs_exist_ok=True)
 os.rename("~/.config/nvim.bak", "~/.config/nvim")
+
+print("copying tmux config")
+shutil.copyfile("./tmux.conf", "~/.tmux.conf")
