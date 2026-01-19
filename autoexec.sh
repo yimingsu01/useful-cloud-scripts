@@ -17,7 +17,7 @@ omz_line = 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzs
 subprocess.run(omz_line, shell=True, cwd=".", check=True)
 
 def run_script(script):
-    subprocess.run(["bash", script], cwd=".", check=True, executable="/usr/bin/zsh")
+    subprocess.run(["zsh", script], cwd=".", check=True, executable="/usr/bin/zsh")
 print(f"Running initial setup scripts: {scripts_to_run}")
 with concurrent.futures.ThreadPoolExecutor() as executor:
     executor.map(run_script, scripts_to_run)

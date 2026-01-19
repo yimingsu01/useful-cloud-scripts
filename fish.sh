@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#! /usr/bin/env zsh
 sudo apt-get install fish
 sudo vim /etc/shells
 sudo vim /etc/passwd
