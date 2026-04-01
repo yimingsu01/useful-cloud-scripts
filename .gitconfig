@@ -1,0 +1,12 @@
+# This is Git's per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+	name = Yiming Su
+	email = yiming34@illinois.edu
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHT2tGWjTIwIxNIeRGh7M4Rg0CA9I9fm07mTQ7HpemYT
+[gpg]
+	format = ssh
+[commit]
+	gpgsign = true
+[core]
+	autocrlf = input
