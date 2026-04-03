@@ -98,7 +98,30 @@ set-option -g focus-events on
 set-window-option -g mode-keys vi
 bind-key -T copy-mode-vi v send-keys -X begin-selection
 bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+
+set -g status-right "#(~/.tmux/git_status.sh #{pane_current_path})"
+set -g status-interval 5
 EOF
+
+echo "==> Writing ~/.tmux/git_status.sh..."
+mkdir -p "$HOME/.tmux"
+cat > "$HOME/.tmux/git_status.sh" <<'EOF'
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ $# -lt 1 ]]; then
+  exit 0
+fi
+
+cd "$1" || exit 0
+
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+if [[ -n "$branch" && "$branch" != "HEAD" ]]; then
+  echo "#[fg=colour10] $branch"
+fi
+EOF
+chmod +x "$HOME/.tmux/git_status.sh"
 
 echo ""
 echo "==> Setup complete."
