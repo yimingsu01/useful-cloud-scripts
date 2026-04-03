@@ -1,24 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BREW="/home/linuxbrew/.linuxbrew/bin/brew"
+BREW="${BREW:-/home/linuxbrew/.linuxbrew/bin/brew}"
+
+append_line_if_missing() {
+  local line="$1"
+  local file="$2"
+
+  touch "$file"
+  if ! grep -Fqx "$line" "$file"; then
+    echo "$line" >> "$file"
+  fi
+}
 
 # ── 1. Homebrew ───────────────────────────────────────────────────────────────
 if ! command -v brew &>/dev/null && [[ ! -x "$BREW" ]]; then
   echo "==> Installing Homebrew..."
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  sudo apt-get update -y
   sudo apt-get install -y build-essential
 else
   echo "==> Homebrew already installed, skipping."
 fi
 
-eval "$($BREW shellenv)"
+if command -v brew &>/dev/null; then
+  BREW="$(command -v brew)"
+fi
+
+eval "$("$BREW" shellenv)"
 
 # Persist brew env to shell configs
 for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
-  if ! grep -q "linuxbrew" "$rc" 2>/dev/null; then
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$rc"
-  fi
+  append_line_if_missing 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' "$rc"
 done
 
 # ── 2. Docker ─────────────────────────────────────────────────────────────────
@@ -64,9 +77,13 @@ fi
 
 # ── 4. Brew packages ──────────────────────────────────────────────────────────
 echo "==> Installing brew packages..."
-brew install kubectl helm k9s uv prek lazygit python@3.12
+brew install kubectl helm k9s uv pre-commit lazygit python@3.12 node
 
-# ── 5. .tmux.conf ─────────────────────────────────────────────────────────────
+# ── 5. Node / npm CLI tools ───────────────────────────────────────────────────
+echo "==> Installing npm packages..."
+npm install -g @anthropic-ai/claude-code @openai/codex
+
+# ── 6. .tmux.conf ─────────────────────────────────────────────────────────────
 echo "==> Writing ~/.tmux.conf..."
 cat > "$HOME/.tmux.conf" <<'EOF'
 bind h select-pane -L
@@ -87,3 +104,7 @@ echo ""
 echo "==> Setup complete."
 echo "    Run 'source ~/.bashrc' (or open a new shell) to reload PATH."
 echo "    If Docker group was just added, run 'newgrp docker' or re-login."
+echo "    Installed Node: $(node --version)"
+echo "    Installed npm: $(npm --version)"
+echo "    Installed Claude Code: $(claude --version)"
+echo "    Installed Codex: $(codex --version)"
