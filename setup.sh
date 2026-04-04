@@ -77,7 +77,10 @@ fi
 
 # ── 4. Brew packages ──────────────────────────────────────────────────────────
 echo "==> Installing brew packages..."
-brew install kubectl helm k9s uv pre-commit lazygit python@3.12 node
+brew install kubectl helm k9s uv pre-commit lazygit python@3.12 node fzf
+
+append_line_if_missing 'eval "$(fzf --bash)"' "$HOME/.bashrc"
+append_line_if_missing 'eval "$(fzf --zsh)"' "$HOME/.zshrc"
 
 # ── 5. Node / npm CLI tools ───────────────────────────────────────────────────
 echo "==> Installing npm packages..."
