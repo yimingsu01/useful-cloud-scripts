@@ -93,6 +93,10 @@ brew install kubectl helm k9s uv pre-commit lazygit python@3.12 node fzf
 append_line_if_missing 'eval "$(fzf --bash)"' "$HOME/.bashrc"
 append_line_if_missing 'eval "$(fzf --zsh)"' "$HOME/.zshrc"
 
+append_line_if_missing 'alias lg="lazygit"' "$HOME/.bashrc"
+append_line_if_missing 'alias lg="lazygit"' "$HOME/.zshrc"
+
+
 echo "==> Writing ~/.tmux/shell_env_sync.sh..."
 mkdir -p "$HOME/.tmux"
 cat > "$HOME/.tmux/shell_env_sync.sh" <<'EOF'
