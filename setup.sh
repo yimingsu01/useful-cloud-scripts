@@ -13,6 +13,17 @@ append_line_if_missing() {
   fi
 }
 
+append_block_if_missing() {
+  local marker="$1"
+  local block="$2"
+  local file="$3"
+
+  touch "$file"
+  if ! grep -Fq "$marker" "$file"; then
+    printf '\n%s\n' "$block" >> "$file"
+  fi
+}
+
 # ── 1. Homebrew ───────────────────────────────────────────────────────────────
 if ! command -v brew &>/dev/null && [[ ! -x "$BREW" ]]; then
   echo "==> Installing Homebrew..."
@@ -81,6 +92,50 @@ brew install kubectl helm k9s uv pre-commit lazygit python@3.12 node fzf
 
 append_line_if_missing 'eval "$(fzf --bash)"' "$HOME/.bashrc"
 append_line_if_missing 'eval "$(fzf --zsh)"' "$HOME/.zshrc"
+
+echo "==> Writing ~/.tmux/shell_env_sync.sh..."
+mkdir -p "$HOME/.tmux"
+cat > "$HOME/.tmux/shell_env_sync.sh" <<'EOF'
+#!/usr/bin/env bash
+
+if [[ -n "${TMUX:-}" ]] && command -v tmux >/dev/null 2>&1; then
+  __tmux_sync_env() {
+    local now
+    now="$(date +%s)"
+
+    if [[ -z "${__TMUX_LAST_ENV_SYNC:-}" ]] || (( now - __TMUX_LAST_ENV_SYNC >= 5 )); then
+      eval "$(tmux show-env -s)"
+      __TMUX_LAST_ENV_SYNC="$now"
+    fi
+  }
+
+  if [[ -n "${BASH_VERSION:-}" ]]; then
+    case ";${PROMPT_COMMAND:-};" in
+      *";__tmux_sync_env;"*) ;;
+      *)
+        if [[ -n "${PROMPT_COMMAND:-}" ]]; then
+          PROMPT_COMMAND="__tmux_sync_env; ${PROMPT_COMMAND}"
+        else
+          PROMPT_COMMAND="__tmux_sync_env"
+        fi
+        ;;
+    esac
+  fi
+
+  if [[ -n "${ZSH_VERSION:-}" ]]; then
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd __tmux_sync_env
+  fi
+
+  __tmux_sync_env
+fi
+EOF
+chmod +x "$HOME/.tmux/shell_env_sync.sh"
+
+append_block_if_missing '# tmux shell env sync' '# tmux shell env sync
+[[ -f "$HOME/.tmux/shell_env_sync.sh" ]] && source "$HOME/.tmux/shell_env_sync.sh"' "$HOME/.bashrc"
+append_block_if_missing '# tmux shell env sync' '# tmux shell env sync
+[[ -f "$HOME/.tmux/shell_env_sync.sh" ]] && source "$HOME/.tmux/shell_env_sync.sh"' "$HOME/.zshrc"
 
 # ── 5. Node / npm CLI tools ───────────────────────────────────────────────────
 echo "==> Installing npm packages..."
