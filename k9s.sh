@@ -4,18 +4,20 @@ set -euo pipefail
 
 brew install derailed/k9s/k9s
 
-K9S_CONFIG_DIR="/users/yimingsu/.config/k9s"
+K9S_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/k9s"
 K9S_CONFIG_FILE="${K9S_CONFIG_DIR}/config.yaml"
 K9S_SKIN_FILE="${K9S_CONFIG_DIR}/transparent.yaml"
 K9S_SKIN_URL="https://raw.githubusercontent.com/derailed/k9s/refs/heads/master/skins/transparent.yaml"
 
 mkdir -p "${K9S_CONFIG_DIR}"
 
-cat > "${K9S_CONFIG_FILE}" <<'EOF'
+if [ ! -f "${K9S_CONFIG_FILE}" ]; then
+  cat > "${K9S_CONFIG_FILE}" <<'EOF'
 k9s:
   ui:
     skin: transparent
 EOF
+fi
 
 if command -v curl >/dev/null 2>&1; then
   curl -fsSL "${K9S_SKIN_URL}" -o "${K9S_SKIN_FILE}"
