@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+set -euo pipefail
+
 brew install derailed/k9s/k9s
 
 K9S_CONFIG_DIR="/users/yimingsu/.config/k9s"
@@ -21,5 +23,10 @@ elif command -v wget >/dev/null 2>&1; then
   wget -qO "${K9S_SKIN_FILE}" "${K9S_SKIN_URL}"
 else
   echo "Neither curl nor wget is installed; cannot download k9s transparent skin." >&2
+  exit 1
+fi
+
+if [ ! -s "${K9S_SKIN_FILE}" ]; then
+  echo "Failed to download k9s transparent skin to ${K9S_SKIN_FILE}." >&2
   exit 1
 fi
