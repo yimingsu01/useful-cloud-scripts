@@ -113,6 +113,31 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias lg="lazygit"
 alias datefm="date +\"%m_%d_%H_%M_%S\""
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
 export HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
 export HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar"
 export HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew/"
@@ -127,6 +152,11 @@ PROMPT='%{$fg_bold[white]%}%n%{$fg[blue]%}@%{$fg_bold[yellow]%}%m'
 PROMPT+=' %{$fg[cyan]%}%~%{$reset_color%} $(git_prompt_info)'
 cd ~
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$(go env GOPATH)/bin
+eval "$(fzf --zsh)"
+alias lg="lazygit"
+
+# tmux shell env sync
+[[ -f "$HOME/.tmux/shell_env_sync.sh" ]] && source "$HOME/.tmux/shell_env_sync.sh"
