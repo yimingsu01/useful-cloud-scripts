@@ -16,6 +16,7 @@ vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged", "FocusLost", "BufLea
   pattern = "*",
   command = "silent! update",
 })
+vim.cmd.colorscheme('solarized')
 
 -- Track the currently running `make` job, if any.
 local make_job = nil
