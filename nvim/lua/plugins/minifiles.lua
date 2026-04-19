@@ -6,7 +6,7 @@ return {
         use_as_default_explorer = true,
       },
       explorer = { enabled = true },
-      picker = { hidden = true, ignored = true },
+      -- picker = { hidden = true, ignored = true },
     },
   },
   {
