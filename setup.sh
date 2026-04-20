@@ -88,7 +88,7 @@ fi
 
 # ── 4. Brew packages ──────────────────────────────────────────────────────────
 echo "==> Installing brew packages..."
-brew install kubectl helm kind k9s uv pre-commit lazygit python@3.12 node fzf fd
+brew install kubectl helm kind k9s uv pre-commit lazygit python@3.12 node fzf fd neovim ripgrep 
 
 append_line_if_missing 'eval "$(fzf --bash)"' "$HOME/.bashrc"
 append_line_if_missing 'eval "$(fzf --zsh)"' "$HOME/.zshrc"
