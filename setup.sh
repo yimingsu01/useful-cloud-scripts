@@ -28,8 +28,8 @@ append_block_if_missing() {
 if ! command -v brew &>/dev/null && [[ ! -x "$BREW" ]]; then
   echo "==> Installing Homebrew..."
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  sudo apt-get update -y
-  sudo apt-get install -y build-essential
+  sudo NEEDRESTART_MODE=a apt-get update -y
+  sudo NEEDRESTART_MODE=a apt-get install -y build-essential
 else
   echo "==> Homebrew already installed, skipping."
 fi
@@ -48,8 +48,8 @@ done
 # ── 2. Docker ─────────────────────────────────────────────────────────────────
 if ! command -v docker &>/dev/null; then
   echo "==> Installing Docker..."
-  sudo apt-get update -y
-  sudo apt-get install -y ca-certificates curl
+  sudo NEEDRESTART_MODE=a apt-get update -y
+  sudo NEEDRESTART_MODE=a apt-get install -y ca-certificates curl
   sudo install -m 0755 -d /etc/apt/keyrings
   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   sudo chmod a+r /etc/apt/keyrings/docker.asc
@@ -57,8 +57,8 @@ if ! command -v docker &>/dev/null; then
     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
     $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  sudo apt-get update -y
-  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  sudo NEEDRESTART_MODE=a apt-get update -y
+  sudo NEEDRESTART_MODE=a apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   sudo groupadd docker 2>/dev/null || true
   sudo usermod -aG docker "$USER"
   echo "==> Docker installed. Re-login (or run 'newgrp docker') for group membership to take effect."
