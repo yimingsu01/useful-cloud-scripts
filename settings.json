@@ -1,0 +1,5 @@
+{
+  "theme": "dark-ansi",
+  "skipDangerousModePermissionPrompt": true,
+  "advisorModel": "claude-opus-4-8"
+}

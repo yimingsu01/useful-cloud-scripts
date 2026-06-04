@@ -141,9 +141,26 @@ append_block_if_missing '# tmux shell env sync' '# tmux shell env sync
 append_block_if_missing '# tmux shell env sync' '# tmux shell env sync
 [[ -f "$HOME/.tmux/shell_env_sync.sh" ]] && source "$HOME/.tmux/shell_env_sync.sh"' "$HOME/.zshrc"
 
-# ── 5. Node / npm CLI tools ───────────────────────────────────────────────────
-echo "==> Installing npm packages..."
-npm install -g @anthropic-ai/claude-code @openai/codex
+# ── 5. Claude Code & Codex (native installers) ────────────────────────────────
+# Both native installers place their binary in ~/.local/bin.
+export PATH="$HOME/.local/bin:$PATH"
+for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
+  append_line_if_missing 'export PATH="$HOME/.local/bin:$PATH"' "$rc"
+done
+
+if ! command -v claude &>/dev/null; then
+  echo "==> Installing Claude Code (native installer)..."
+  curl -fsSL https://claude.ai/install.sh | bash
+else
+  echo "==> Claude Code already installed, skipping."
+fi
+
+if ! command -v codex &>/dev/null; then
+  echo "==> Installing Codex (native installer)..."
+  curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
+else
+  echo "==> Codex already installed, skipping."
+fi
 
 # ── 6. .tmux.conf ─────────────────────────────────────────────────────────────
 echo "==> Writing ~/.tmux.conf..."

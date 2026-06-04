@@ -1,0 +1,7 @@
+{
+  "logLevel": "all",
+  "model": "gpt-5.5",
+  "effortLevel": "xhigh",
+  "showReasoning": false,
+  "remoteSessions": true
+}
