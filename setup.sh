@@ -2,6 +2,7 @@
 set -euo pipefail
 
 BREW="${BREW:-/home/linuxbrew/.linuxbrew/bin/brew}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 append_line_if_missing() {
   local line="$1"
@@ -24,7 +25,73 @@ append_block_if_missing() {
   fi
 }
 
-# ── 1. Homebrew ───────────────────────────────────────────────────────────────
+clone_zsh_plugin_if_missing() {
+  local name="$1"
+  local repo="$2"
+  local target="$3"
+  shift 3
+
+  if [[ -d "$target" ]]; then
+    echo "==> ${name} already installed, skipping."
+    return
+  fi
+
+  echo "==> Installing ${name}..."
+  git clone "$@" "$repo" "$target"
+}
+
+# ── 1. Zsh & Oh My Zsh ────────────────────────────────────────────────────────
+ZSH_APT_PACKAGES=()
+if ! command -v zsh &>/dev/null; then
+  ZSH_APT_PACKAGES+=(zsh)
+fi
+if ! command -v git &>/dev/null; then
+  ZSH_APT_PACKAGES+=(git)
+fi
+
+if (( ${#ZSH_APT_PACKAGES[@]} > 0 )); then
+  echo "==> Installing ${ZSH_APT_PACKAGES[*]}..."
+  sudo NEEDRESTART_MODE=a apt-get update -y
+  sudo NEEDRESTART_MODE=a apt-get install -y "${ZSH_APT_PACKAGES[@]}"
+else
+  echo "==> zsh and git already installed, skipping."
+fi
+
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+  echo "==> Installing Oh My Zsh..."
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+else
+  echo "==> Oh My Zsh already installed, skipping."
+fi
+
+if [[ ! -f "$SCRIPT_DIR/.zshrc" ]]; then
+  echo "ERROR: $SCRIPT_DIR/.zshrc not found." >&2
+  exit 1
+fi
+
+echo "==> Copying .zshrc to $HOME/.zshrc..."
+install -m 0644 "$SCRIPT_DIR/.zshrc" "$HOME/.zshrc"
+
+ZSH_DIR="$HOME/.oh-my-zsh"
+ZSH_CUSTOM_DIR="$ZSH_DIR/custom"
+ZSH_PLUGIN_DIR="$ZSH_CUSTOM_DIR/plugins"
+mkdir -p "$ZSH_PLUGIN_DIR"
+
+clone_zsh_plugin_if_missing "zsh-autosuggestions" \
+  "https://github.com/zsh-users/zsh-autosuggestions.git" \
+  "$ZSH_PLUGIN_DIR/zsh-autosuggestions"
+clone_zsh_plugin_if_missing "zsh-syntax-highlighting" \
+  "https://github.com/zsh-users/zsh-syntax-highlighting.git" \
+  "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting"
+clone_zsh_plugin_if_missing "fast-syntax-highlighting" \
+  "https://github.com/zdharma-continuum/fast-syntax-highlighting.git" \
+  "$ZSH_PLUGIN_DIR/fast-syntax-highlighting"
+clone_zsh_plugin_if_missing "zsh-autocomplete" \
+  "https://github.com/marlonrichert/zsh-autocomplete.git" \
+  "$ZSH_PLUGIN_DIR/zsh-autocomplete" \
+  --depth 1 --
+
+# ── 2. Homebrew ───────────────────────────────────────────────────────────────
 if ! command -v brew &>/dev/null && [[ ! -x "$BREW" ]]; then
   echo "==> Installing Homebrew..."
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -45,7 +112,7 @@ for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
   append_line_if_missing 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' "$rc"
 done
 
-# ── 2. Docker ─────────────────────────────────────────────────────────────────
+# ── 3. Docker ─────────────────────────────────────────────────────────────────
 if ! command -v docker &>/dev/null; then
   echo "==> Installing Docker..."
   sudo NEEDRESTART_MODE=a apt-get update -y
@@ -66,7 +133,7 @@ else
   echo "==> Docker already installed, skipping."
 fi
 
-# ── 3. Go ─────────────────────────────────────────────────────────────────────
+# ── 4. Go ─────────────────────────────────────────────────────────────────────
 GO_VERSION="1.24.1"
 if ! command -v go &>/dev/null; then
   echo "==> Installing Go ${GO_VERSION}..."
@@ -86,7 +153,7 @@ else
   echo "==> Go already installed ($(go version)), skipping."
 fi
 
-# ── 4. Brew packages ──────────────────────────────────────────────────────────
+# ── 5. Brew packages ──────────────────────────────────────────────────────────
 echo "==> Installing brew packages..."
 brew install kubectl helm kind k9s uv pre-commit lazygit python@3.12 node fzf fd neovim ripgrep 
 
@@ -141,7 +208,7 @@ append_block_if_missing '# tmux shell env sync' '# tmux shell env sync
 append_block_if_missing '# tmux shell env sync' '# tmux shell env sync
 [[ -f "$HOME/.tmux/shell_env_sync.sh" ]] && source "$HOME/.tmux/shell_env_sync.sh"' "$HOME/.zshrc"
 
-# ── 5. Claude Code & Codex (native installers) ────────────────────────────────
+# ── 6. Claude Code & Codex (native installers) ────────────────────────────────
 # Both native installers place their binary in ~/.local/bin.
 export PATH="$HOME/.local/bin:$PATH"
 for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
@@ -162,7 +229,7 @@ else
   echo "==> Codex already installed, skipping."
 fi
 
-# ── 6. .tmux.conf ─────────────────────────────────────────────────────────────
+# ── 7. .tmux.conf ─────────────────────────────────────────────────────────────
 echo "==> Writing ~/.tmux.conf..."
 cat > "$HOME/.tmux.conf" <<'EOF'
 bind h select-pane -L
@@ -204,8 +271,9 @@ chmod +x "$HOME/.tmux/git_status.sh"
 
 echo ""
 echo "==> Setup complete."
-echo "    Run 'source ~/.bashrc' (or open a new shell) to reload PATH."
+echo "    Run 'source ~/.bashrc' or 'source ~/.zshrc' (or open a new shell) to reload PATH."
 echo "    If Docker group was just added, run 'newgrp docker' or re-login."
+echo "    Installed zsh: $(zsh --version)"
 echo "    Installed Node: $(node --version)"
 echo "    Installed npm: $(npm --version)"
 echo "    Installed Claude Code: $(claude --version)"
