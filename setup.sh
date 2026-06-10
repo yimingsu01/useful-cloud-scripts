@@ -86,10 +86,6 @@ clone_zsh_plugin_if_missing "zsh-syntax-highlighting" \
 clone_zsh_plugin_if_missing "fast-syntax-highlighting" \
   "https://github.com/zdharma-continuum/fast-syntax-highlighting.git" \
   "$ZSH_PLUGIN_DIR/fast-syntax-highlighting"
-clone_zsh_plugin_if_missing "zsh-autocomplete" \
-  "https://github.com/marlonrichert/zsh-autocomplete.git" \
-  "$ZSH_PLUGIN_DIR/zsh-autocomplete" \
-  --depth 1 --
 
 # ── 2. Homebrew ───────────────────────────────────────────────────────────────
 if ! command -v brew &>/dev/null && [[ ! -x "$BREW" ]]; then
