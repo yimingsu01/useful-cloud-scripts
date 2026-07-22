@@ -151,13 +151,22 @@ fi
 
 # ── 5. Brew packages ──────────────────────────────────────────────────────────
 echo "==> Installing brew packages..."
-HOMEBREW_ASK= brew install kubectl helm kind k9s uv pre-commit lazygit python@3.12 node fzf fd neovim ripgrep copilot-cli
+CI=1 HOMEBREW_NO_ENV_HINTS=1 "$BREW" install kubectl helm kind k9s uv pre-commit lazygit python@3.12 node fzf fd neovim ripgrep copilot-cli </dev/null
 
 append_line_if_missing 'eval "$(fzf --bash)"' "$HOME/.bashrc"
 append_line_if_missing 'eval "$(fzf --zsh)"' "$HOME/.zshrc"
 
 append_line_if_missing 'alias lg="lazygit"' "$HOME/.bashrc"
 append_line_if_missing 'alias lg="lazygit"' "$HOME/.zshrc"
+
+# ── 6. Midnight Commander ─────────────────────────────────────────────────────
+if ! command -v mc &>/dev/null; then
+  echo "==> Installing Midnight Commander..."
+  sudo NEEDRESTART_MODE=a apt-get update -y
+  sudo NEEDRESTART_MODE=a apt-get install -y mc
+else
+  echo "==> Midnight Commander already installed, skipping."
+fi
 
 
 echo "==> Writing ~/.tmux/shell_env_sync.sh..."
@@ -204,7 +213,7 @@ append_block_if_missing '# tmux shell env sync' '# tmux shell env sync
 append_block_if_missing '# tmux shell env sync' '# tmux shell env sync
 [[ -f "$HOME/.tmux/shell_env_sync.sh" ]] && source "$HOME/.tmux/shell_env_sync.sh"' "$HOME/.zshrc"
 
-# ── 6. Claude Code & Codex (native installers) ────────────────────────────────
+# ── 7. Claude Code & Codex (native installers) ────────────────────────────────
 # Both native installers place their binary in ~/.local/bin.
 export PATH="$HOME/.local/bin:$PATH"
 for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
