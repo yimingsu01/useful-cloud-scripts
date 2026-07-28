@@ -1,8 +1,0 @@
-WRN 2026-04-08T09:36:51.778 ?.32778    server_start:193: Failed to start server: operation not permitted: /var/folders/h1/8s4jv7p906g_l9t7smcyjs8c0000gn/T/nvim.yms/NZtBOC/nvim.32778.0
-WRN 2026-04-08T09:36:59.727 ?.32792    server_start:193: Failed to start server: operation not permitted: /var/folders/h1/8s4jv7p906g_l9t7smcyjs8c0000gn/T/nvim.yms/FeDkdU/nvim.32792.0
-WRN 2026-04-08T09:37:09.754 ?.32797    server_start:193: Failed to start server: operation not permitted: /var/folders/h1/8s4jv7p906g_l9t7smcyjs8c0000gn/T/nvim.yms/d2YRjd/nvim.32797.0
-WRN 2026-04-08T09:37:09.754 ?.32798    server_start:193: Failed to start server: operation not permitted: /var/folders/h1/8s4jv7p906g_l9t7smcyjs8c0000gn/T/nvim.yms/O7Odxj/nvim.32798.0
-WRN 2026-04-08T09:39:22.406 ?.32855    server_start:193: Failed to start server: operation not permitted: /var/folders/h1/8s4jv7p906g_l9t7smcyjs8c0000gn/T/nvim.yms/5l0OW3/nvim.32855.0
-WRN 2026-04-08T09:41:48.401 ?.33063    server_start:193: Failed to start server: operation not permitted: /var/folders/h1/8s4jv7p906g_l9t7smcyjs8c0000gn/T/nvim.yms/916ADO/nvim.33063.0
-WRN 2026-04-08T09:43:59.039 ?.33099    server_start:193: Failed to start server: operation not permitted: /var/folders/h1/8s4jv7p906g_l9t7smcyjs8c0000gn/T/nvim.yms/698c34/nvim.33099.0
-WRN 2026-04-08T09:44:03.415 ?.33106    server_start:193: Failed to start server: operation not permitted: /var/folders/h1/8s4jv7p906g_l9t7smcyjs8c0000gn/T/nvim.yms/14X8pJ/nvim.33106.0
