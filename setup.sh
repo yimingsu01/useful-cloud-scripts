@@ -273,6 +273,10 @@ if [[ -n "$branch" && "$branch" != "HEAD" ]]; then
 fi
 EOF
 chmod +x "$HOME/.tmux/git_status.sh"
+cp -r nvim $HOME/.config/ 
+cp fgcolor.zsh-theme $HOME/.oh-my-zsh/custom/themes
+cp .tmux.conf $HOME/ 
+cp .zshrc $HOME/
 
 echo ""
 echo "==> Setup complete."

@@ -8,7 +8,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "The time is ${YELLOW}$(date)${NC} and you are on ${BLUE}$(hostname)${NC}"
-echo "Working at MSR, champion."
+echo "Flying machine, champion."
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -168,3 +168,12 @@ fi
 
 # tmux shell env sync
 [[ -f "$HOME/.tmux/shell_env_sync.sh" ]] && source "$HOME/.tmux/shell_env_sync.sh"
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/tex-support/texlive/2026/bin/x86_64-linux:$PATH"
+
+# >>> Codex installer >>>
+export PATH="/home/ming/.local/bin:$PATH"
+# <<< Codex installer <<<
+#
+export PATH="/home/ming/software/thunderbird:$PATH"
+export PATH="/home/ming/software:$PATH"
