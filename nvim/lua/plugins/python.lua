@@ -4,6 +4,7 @@ return {
     opts = {
       servers = {
         basedpyright = {
+          enabled = true,
           -- basedpyright automatically uses <project root>/.venv when pythonPath is unset.
           root_markers = {
             "pyrightconfig.json",
@@ -20,6 +21,10 @@ return {
               disableOrganizeImports = true,
             },
           },
+        },
+        -- Keep LazyVim/Mason from installing or enabling Pyright.
+        pyright = {
+          enabled = false,
         },
       },
     },
