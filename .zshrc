@@ -1,4 +1,3 @@
-
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
@@ -8,7 +7,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "The time is ${YELLOW}$(date)${NC} and you are on ${BLUE}$(hostname)${NC}"
-echo "Flying machine, champion."
+echo "Welcome back, champion."
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -17,7 +16,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="fgcolor"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -82,6 +81,9 @@ COMPLETION_WAITING_DOTS="true"
 # plugins=(git zsh-autocomplete)
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting)
 
+# Let Oh My Zsh initialize Docker completions with its normal compinit pass.
+fpath=("$HOME/.docker/completions" $fpath)
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -114,66 +116,78 @@ fi
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias lg="lazygit"
 alias datefm="date +\"%m_%d_%H_%M_%S\""
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
-
-# colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-export HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
-export HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar"
-export HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew/"
-export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-export PATH="/home/linuxbrew/.linuxbrew/sbin:$PATH"
+alias ll="ls -al"
+alias noansi="sed -i 's/\x1b\[[0-9;]*[a-zA-Z]//g'"
+alias claude="claude --allow-dangerously-skip-permissions"
+export HOMEBREW_PREFIX="/opt/homebrew/"
+export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+export HOMEBREW_REPOSITORY="/opt/homebrew"
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/sbin:$PATH"
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/texlive/2025/bin/universal-darwin:$PATH"
 export PATH="/opt/codeql:$PATH"
-export PATH="/home/t-yimingsu/.local/bin/verus:$PATH"
+export PATH="/Users/yms/sdk/go1.23.0/bin:$PATH"
+export PATH="/Users/yms/go/bin:$PATH"
+export PATH="/Users/yms/.local/bin/zellij/:$PATH"
+
+# PROMPT='%{$fg_bold[white]%}%n'
+# PROMPT+=' %{$fg[cyan]%}%~%{$reset_color%} '
+PROMPT='%n'
+PROMPT+=' %~ '
+
+alias adark="ln -fs ~/.config/alacritty/themes/themes/github_dark.toml ~/.config/alacritty/themes/themes/_active.toml"
+alias alight="ln -fs ~/.config/alacritty/themes/themes/github_light.toml ~/.config/alacritty/themes/themes/_active.toml"
+func alatheme() {
+  ln -fs ~/.config/alacritty/themes/themes/$1.toml ~/.config/alacritty/themes/themes/_active.toml
+}
 
 
-# Prompt is set by the fgcolor theme
-cd ~
+croppdf() {
+    # Check if a file path was provided
+    if [ -z "$1" ]; then
+        echo "Usage: pdf-crop-replace filename.pdf"
+        return 1
+    fi
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:$(go env GOPATH)/bin
-eval "$(fzf --zsh)"
-alias lg="lazygit"
-alias copilot="copilot --yolo"
-alias claude="CLAUDE_CODE_EFFORT_LEVEL=max claude --dangerously-skip-permissions"
+    local input_file="$1"
+    local base_name="${input_file%.*}"
+    local cropped_file="${base_name}-crop.pdf"
 
-if [ -z "$SSH_AUTH_SOCK" ]; then
-  eval "$(ssh-agent -s)" >/dev/null
-fi
+    # Run pdfcrop
+    if pdfcrop "$input_file"; then
+        # If successful, move the cropped file back to the original name
+        mv "$cropped_file" "$input_file"
+        echo "Successfully cropped and replaced: $input_file"
+    else
+        echo "Error: pdfcrop failed. Original file preserved."
+        return 1
+    fi
+}
 
+source <(fzf --zsh)
 
-# tmux shell env sync
-[[ -f "$HOME/.tmux/shell_env_sync.sh" ]] && source "$HOME/.tmux/shell_env_sync.sh"
+# Ensure SSH/tmux sessions use Unicode rather than the C locale.
+export LANG=en_US.UTF-8
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/tex-support/texlive/2026/bin/x86_64-linux:$PATH"
+export PATH="$HOME/.verus/verus-arm64-macos:$PATH"
 
-# >>> Codex installer >>>
-export PATH="/home/ming/.local/bin:$PATH"
-# <<< Codex installer <<<
-#
-export PATH="/home/ming/software/thunderbird:$PATH"
-export PATH="/home/ming/software:$PATH"
+export NVM_DIR="$HOME/.nvm"
+
+# Defer NVM's expensive version activation until a Node command is first used.
+_nvm_lazy_load() {
+  unfunction nvm node npm npx corepack 2>/dev/null
+  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+  [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+  unfunction _nvm_lazy_load 2>/dev/null
+}
+
+nvm() { _nvm_lazy_load; nvm "$@"; }
+node() { _nvm_lazy_load; command node "$@"; }
+npm() { _nvm_lazy_load; command npm "$@"; }
+npx() { _nvm_lazy_load; command npx "$@"; }
+corepack() { _nvm_lazy_load; command corepack "$@"; }
